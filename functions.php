@@ -4,7 +4,7 @@ require 'config.php';
 
 //TODO Add Date Filter
 
-function get_ten_randocm_thumbnails(){
+function generate_random_thumbnails(){
 
 	$list_params = [
 		'path' => PHOTOS_FOLDER,
@@ -30,35 +30,33 @@ function get_ten_randocm_thumbnails(){
 
 	}
 
-	$num_photos = count($photos)
-	if($num_photos) !== 0)
+	$num_photos = count($photos);
+	if($num_photos !== 0)
 	{
 		if($num_photos >= 10)
 		{
-			for($i = 0; $i < 10; $i++)
-			{
-				$rand_index = array_rand($photos, 1);
-		$rand_photo = $photos[$rand_index];
-			}
-
+			$rand_array = array_rand($photos, 10);
+			$new_photos = random_photo_select($photos, $rand_array);
+			echo "<pre>";
+			print_r($new_photos);
 
 		}
 		else
 		{
-			for($i = 0; $i < $num_photos; $i++)
-			{
-				
-			}
+			$rand_array = array_rand($photos, $num_photos);
+			$new_photos = random_photo_select($photos, $rand_array);
+
+
 		}
 
 
 		//OLD ARRAY RAND
-		$rand_index = array_rand($photos, 1);
-		$rand_photo = $photos[$rand_index];
+		// $rand_index = array_rand($photos, 1);
+		// $rand_photo = $photos[$rand_index];
 
-		//Create Image from Dropbox Content	
-		header('Content-Type: image/jpeg');
-		$download = download_from_dropbox($rand_photo, DROPBOX_TOKEN);
+		// //Create Image from Dropbox Content	
+		// header('Content-Type: image/jpeg');
+		// $download = download_full_file_dropbox($rand_photo, DROPBOX_TOKEN);
 	}
 	else
 	{
@@ -68,6 +66,16 @@ function get_ten_randocm_thumbnails(){
 
 
 //================ Helper Functions ================
+function random_photo_select($photos, $random_keys_array){
+	$random_select_array = array();
+
+	foreach ($random_keys_array as $key) {
+		array_push($random_select_array, $photos[$key]);
+	}
+
+	return $random_select_array;
+}
+
 
 /** Dropbox uses POST for requests that really should be GET, so we just pass this function through. */
 function get_from_dropbox( $params, $endpoint, $access_token ) {
@@ -112,8 +120,13 @@ function send_to_dropbox( $params, $endpoint, $access_token ) {
 
 } // Function send_to_dropbox
 
+/** Download thumbnails from Dropbox. */
+function download_thumbnails_dropbox(){
+
+}
+
 /** Download file from Dropbox. */
-function download_from_dropbox( $path, $access_token ) {
+function download_full_file_dropbox( $path, $access_token ) {
 
 	$json_path = json_encode(array('path'=>$path));
 
@@ -126,7 +139,7 @@ function download_from_dropbox( $path, $access_token ) {
 	$ch = curl_init();
 	curl_setopt( $ch, CURLOPT_URL, $endpoint );
 	curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
-	// curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 	curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
 	curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 	curl_setopt($ch, CURLOPT_VERBOSE, 0);
