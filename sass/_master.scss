@@ -1,0 +1,98 @@
+
+// Master SCSS file, for mixins, variables etc
+
+// ****************************** VARIABLES ***************************** //
+
+// theme colour variables
+	$browsererror: #FCF8C8;
+	$truewhite: #ffffff;
+	$menuborder: #e7e7e7;
+	$headingline: #b1b1b1;
+	$white: $truewhite; 
+	$black: #000000; 
+	$primary: #c6cad1; 
+	$primary_light: lighten($primary,10); 
+	$secondary: #2f2f2f;
+	$tertiary: #4c6aaf; 
+	$bodycolor: #8e8e8e; // main font colour
+	$heading: $primary;
+	$red: #da0030;
+
+	$swipe: #bebebe;
+	$error: $red;
+
+// Jacloc Theme vars
+	$bggrey: #f6f6f6;
+	$bodyhover: #da1c5c;
+	$darkbggrey: #f0f0f0;
+	$lines: #d8d8d8;
+	$footer-icon: #dedede;
+	$buttonhover: #07afe5;
+	$subtitle-grey: #797979;
+	$hero-grey: #dadee5;
+	$hero-box: #e6e9f1;
+	$hero-title: #303030;
+	$hero-subtitle: #e24357;
+	$product-border: #e7e7e7;
+	$slider-dot: #bbc1d0;
+
+	//Aliases
+	$blue: $tertiary;
+	$grey: $primary;
+	$darkgrey: $secondary;
+	$heading-two: $darkgrey;
+	$pink: $bodyhover;
+	$lightblue: $buttonhover;
+
+
+// theme font variables
+	$bodyfont: 'Montserrat', sans-serif;
+	$headingfont: 'Montserrat', sans-serif;
+	$bodysize: 16px;
+	$body_lh: 26px;
+	$bodybg: $bodycolor;
+
+	$bodyfont_regular: $bodyfont;
+	$bodyfont_regular_italic: $bodyfont; 
+	$bodyfont_bold: $bodyfont;
+	$bodyfont_bold_italic: $bodyfont;
+	$bodyfont_light: $bodyfont;
+	$bodyfont_light_italic: $bodyfont;
+	$bodyfont_medium: $bodyfont;
+	$bodyfont_medium_italic: $bodyfont;
+	
+	$headingfont_regular: $headingfont;
+	$headingfont_bold: $headingfont;
+	$headingfont_thin: $headingfont;
+
+// theme dimension variables
+	
+	$content_width: 1200px;
+	$page_width: 2560px;
+
+//Theme breakpoints
+	$small: 1500px;
+	$tb: 1199px; //Tablet
+	$mid-tb: 1000px; //Midway
+	$mb: 767px; //Mobile
+	
+// aliases for many of the above
+	$primarylight: $primary_light;
+	$gray: $grey;
+	$bodytext: $bodycolor;
+	$bodycolour: $bodycolor;
+
+	$contentwidth: $content_width;
+
+	$bodyfontbold: $bodyfont_bold;
+	$bodyfontitalic: $bodyfont_regular_italic;
+	$bodyfontbolditalic: $bodyfont_bold_italic;
+
+	$headingfontbold: $headingfont_bold;
+
+	$bodybold: $bodyfont_bold;
+	$headingbold: $headingfont_bold;
+
+@import "mixins"; // import generic mixins
+@import "placeholders"; // import the fonts
+

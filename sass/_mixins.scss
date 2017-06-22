@@ -1,0 +1,290 @@
+
+// ******************************* CONTAINERS ******************************* //
+
+@mixin container($width,$left:0){
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	width: $width;
+	max-width: 100%; // makes containers automatically responsive
+	left: $left;
+}
+
+// set up containers - these can be @include'd or added as a class in the HTML */
+// left offset (2nd parameter) is negative half of the difference between the width (1st parameter) & content_container's width */
+
+	@mixin content_container(){ @include container(#{$content_width}); }
+	@mixin fullwidth_container(){ @include container(100%); }
+	
+// ******************************* GENERIC MIX-INS ****************************** //
+
+@mixin clearfix(){ &:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; } }
+@mixin ie8opacity($opacity){ -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity})"; }
+
+@mixin vendor($name,$value){
+	-webkit-#{$name}: $value;
+	-moz-#{$name}: $value;
+	-ms-#{$name}: $value;
+	-o-#{$name}: $value;
+	#{$name}: $value;
+}
+
+@mixin vendorprop($name,$prop,$value:""){
+	-webkit-#{$name}: -webkit-#{$prop} unquote($value);
+	-moz-#{$name}: -moz-#{$prop} unquote($value);
+	-ms-#{$name}: -ms-#{$prop} unquote($value);
+	-o-#{$name}: -o-#{$prop} unquote($value);
+	#{$name}: #{$prop} unquote($value);
+}
+
+@mixin pseudosetup(){ content: ""; position: absolute; }
+@mixin borderradius($value){ @include vendor(border-radius,$value); }
+@mixin transition($value...){ @include vendor(transition,#{$value}); }
+@mixin trans_delay($value...){ @include vendor(transition-delay, #{$value});}
+@mixin trans(){ @include transition(all .5s); }
+@mixin untrans(){ @include transition(none); }
+@mixin transition_vendor($prop,$value){ @include vendorprop("transition",$prop,"#{$value}"); }
+	
+@mixin root($selector,$declarations){
+	// useful for applying modernizr classes etc. or other "at root" classes
+	// usage:
+	//	.background { @include root(".oldie",(background-attachment,scroll) (background-position,center !important)); }
+	// returns:
+	// 	.oldie .background { background-attachment: scroll; background-position: center !important; }
+	@at-root #{$selector} & {
+		@each $value in $declarations {
+			#{nth($value,1)}: #{nth($value,2)}
+		}
+	}
+}
+
+@mixin transform($value){ @include vendor(transform,$value); }
+
+@mixin borderbox(){ @include vendor(box-sizing,border-box); }
+@mixin userselect(){ -webkit-touch-callout: none; -webkit-user-select: none; -moz-user-select: none; }
+@mixin remove_vertical($prop){ &:first-child { #{$prop}-top: 0; } &:last-child { #{$prop}-bottom: 0; } }
+@mixin remove_horizontal($prop){ &:first-child { #{$prop}-left: 0; } &:last-child { #{$prop}-right: 0; } }
+@mixin pseudosetup(){ content: ""; position: absolute; }
+@mixin ellipsis(){ overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+@mixin inputreset(){ @include borderradius(0); &:not(select){ -webkit-appearance: none; } }
+@mixin hidetext(){ color: transparent !important; text-indent: -9999px; }
+
+// set the placeholder text colour in a variety of browsers
+// HT: https://css-tricks.com/snippets/css/style-placeholder-text/
+
+@mixin animation($value){@include vendor(animation, $value);}
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content; 
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @-ms-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  } 
+}
+
+
+@mixin placeholder($color){
+	&::-webkit-input-placeholder { color: $color; }
+	&:-moz-placeholder { color: $color; }
+	&::-moz-placeholder { color: $color; }
+	&:-ms-input-placeholder { color: $color; }
+}
+
+
+@mixin imagebg($background-size: cover){
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: $background-size;
+	.mod-no-bgsizecover & { background-size: 100%; }
+	//@at-root img#{&}{ @include imagebg-img; } // this is an alternative to the imagebg-img mixin below also calling the imagebg mixin. obviously, we can't use both at once, and it's possibly a bit more flexible to able to call the below directly on an element
+}
+
+@mixin imagebgimg($background-size: contain){
+	@include imagebg;
+	@include borderbox; // stop the padding-left above from breaking everything ;)
+	padding-left: 100%; // allow a background-image to be used on an img element
+	background-size: $background-size;
+	.mod-no-bgsizecover & { background-size: 100%; padding-left: 0; }
+}
+
+@mixin bg-trick{
+	padding: 0; //Overide
+	@include imagebgimg(cover);
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+// set multiple properties to the same value, in one line
+// usage: @include same(height, line-height, 60px);
+// HT https://github.com/sass/sass/issues/109#issuecomment-44480053
+
+@mixin same($values...){
+	$length: length($values);
+	$value: nth($values, $length);
+	@for $i from 1 to $length{ #{nth($values, $i)}: $value; }
+}
+
+// background position for old browser fall back
+	
+@mixin background-position($value1,$value2){
+	background-position: $value1;
+	background-position: $value1 $value2;
+}
+	
+// fonts
+
+//define font family and weight for a google font 
+@mixin google-font($family, $weight: normal){
+	font-family: "#{$family}";
+	font-weight: $weight;
+	font-style: normal;
+}
+
+
+@mixin font-face($human_name, $machine_name, $svg_name: $machine_name, $woff2: false, $otf: false){
+	//$machine_name: #{$machine_name}-webfont; // uncomment to append to file names if you want to do it wholesale
+	@font-face {
+		font-family: "#{$human_name}";
+		src: url("fonts/#{$machine_name}.eot");
+		
+		@if not $woff2 and not $otf {
+			src: url("fonts/#{$machine_name}.eot?#iefix") format("embedded-opentype"),
+				 url("fonts/#{$machine_name}.woff") format("woff"),
+				 url("fonts/#{$machine_name}.ttf") format("truetype"),
+				 url("fonts/#{$machine_name}.svg##{$svg_name}") format("svg");
+		}
+		
+		@elseif $woff2 and not $otf {
+			src: url("fonts/#{$machine_name}.eot?#iefix") format("embedded-opentype"),
+				 url("fonts/#{$machine_name}.woff2") format("woff2"),
+				 url("fonts/#{$machine_name}.woff") format("woff"),
+				 url("fonts/#{$machine_name}.ttf") format("truetype"),
+				 url("fonts/#{$machine_name}.svg##{$svg_name}") format("svg");
+		}
+		
+		@elseif $otf and not $woff2 {
+			src: url("fonts/#{$machine_name}.eot?#iefix") format("embedded-opentype"),
+				 url("fonts/#{$machine_name}.otf")  format("opentype"),
+				 url("fonts/#{$machine_name}.woff") format("woff"),
+				 url("fonts/#{$machine_name}.ttf") format("truetype"),
+				 url("fonts/#{$machine_name}.svg##{$svg_name}") format("svg");
+		}
+		
+		@elseif $otf and $woff2 {
+			src: url("fonts/#{$machine_name}.eot?#iefix") format("embedded-opentype"),
+				 url("fonts/#{$machine_name}.otf")  format("opentype"),
+				 url("fonts/#{$machine_name}.woff2") format("woff2"),
+				 url("fonts/#{$machine_name}.woff") format("woff"),
+				 url("fonts/#{$machine_name}.ttf") format("truetype"),
+				 url("fonts/#{$machine_name}.svg##{$svg_name}") format("svg");
+		}
+		
+		font-weight: normal;
+		font-style: normal;
+	}
+}
+
+//Mixin for defining fonts using a sass-list while still using font-face implementation
+//Simply pass a $list variable like the examples below
+//Use "" to seperate list items eg. "item1","item2"
+//Note: the first two items in the list must be defined (font name, font source/machine name)
+//e.g 1) $list = "Roboto","roboto-regular-webfont";
+//e.g 2) $list = "Roboto Bold","roboto-bold-webfont","roboto-bold-webfont";
+//e.g 3) $list = "Roboto Bold Italic","roboto-bolditalic-webfont","Roboto Bold Italic", false, true;
+@mixin define-font($list){
+	$list-length: length($list);
+	
+	@if $list-length > 5 or $list-length < 2{
+		@error "The list has an incorrect number of arguments"
+	}
+
+	$name: nth($list, 1);
+	$src: nth($list, 2);
+	$svg: $src;
+	$wof: false;
+	$otf: false;
+
+	@if $list-length == 3{
+		$svg: nth($list, 3);
+	}
+
+	@else if $list-length == 4{
+		$svg: nth($list, 3);
+		$wof: nth($list, 4);
+	}
+
+	@else if $list-length == 5{
+		$svg: nth($list, 3);
+		$wof: nth($list, 4);
+		$otf: nth($list, 5);
+	}
+
+	@include font-face($name, $src, $svg, $wof, $otf);
+}
+
+// quick and easy font size setter
+	
+@function ems($value){
+	// converts a pixel amount to rems or ems based on the body font size
+	$value: $value / $bodysize + rem;
+	//$value: $value / $bodysize + em;
+	@return $value;
+}
+
+@mixin icon($icon_url,$icon_url_darkbg){
+	background-image: url("images/icons/#{$icon_url}.png");
+	background-repeat: no-repeat;
+	padding-left: 2.5em; // was 35px
+	background-size: 1.3em; // was 20px
+	min-height: 1.3em; // was 25px
+	display: inline-block; // so min-height actually takes effect
+	background-position: center left;
+	.darkbg & { background-image: url("images/icons/#{$icon_url_darkbg}.png"); }
+	//.mod-no-backgroundsize & { background-image: url("images/icons/#{$icon_url}_small.png"); }
+	//.mod-no-backgroundsize .darkbg & { background-image: url("images/icons/#{$icon_url_darkbg}_small.png"); }
+	
+	// hide bullet points & pseudo-bullet points if this is used as a class on an li
+	@at-root li#{&} { list-style-type: none !important; margin-left: -15px; } // normal bullet
+	@at-root li#{&}:before { display: none; } // psuedo bullet
+	
+}
+
+// easily create an inline (data URI) SVG
+
+@mixin svg($prop,$attr,$svg){
+	// requires custom base64Encode function - see _sass_functions.rb
+	background-image: url('data:image/svg+xml;base64,'+base64Encode('<svg xmlns="http://www.w3.org/2000/svg" #{$attr}>#{$svg}</svg>'));
+}
+
+// ******************************* RESPONSIVE MIX-INS ****************************** //
+
+@mixin media_query($breakpoint) {
+
+	@media screen and (max-width: #{$breakpoint}) {
+		@content;
+	}
+
+}
+
+@mixin media_query_laptop($breakpoint) {
+
+	@media screen and (min-width: #{$tb}) and (max-height: #{$breakpoint}) {
+		@content;
+	}
+
+}
+
+
+// ******************************* ALIASES for above MIXINS ******************************* //
+
+@mixin contentcontainer(){ @include content_container; }
+@mixin border-box(){ @include borderbox(); }
+@mixin imagebg-img($background-size: contain){ @include imagebgimg($background-size); }
+
+// ********************* The end, thanks for visiting! ********************* //

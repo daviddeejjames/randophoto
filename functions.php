@@ -2,9 +2,8 @@
 
 require 'config.php'; 
 
-//TODO Add Date Filter
 
-function generate_random_thumbnails(){
+function get_random_thumbnails(){
 
 	$list_params = [
 		'path' => PHOTOS_FOLDER,
@@ -33,22 +32,14 @@ function generate_random_thumbnails(){
 	$num_photos = count($photos);
 	if($num_photos !== 0)
 	{
-		if($num_photos >= 10)
+		$rand_array = array_rand($photos, 10);
+		$new_photos = random_photo_select($photos, $rand_array);
+
+		//Create filenames for each of th
+		foreach ($new_photos as $key => $value)
 		{
-			$rand_array = array_rand($photos, 10);
-			$new_photos = random_photo_select($photos, $rand_array);
-			echo "<pre>";
-			print_r($new_photos);
-
+			# code...
 		}
-		else
-		{
-			$rand_array = array_rand($photos, $num_photos);
-			$new_photos = random_photo_select($photos, $rand_array);
-
-
-		}
-
 
 		//OLD ARRAY RAND
 		// $rand_index = array_rand($photos, 1);
@@ -60,23 +51,16 @@ function generate_random_thumbnails(){
 	}
 	else
 	{
-		echo "Sorry no file was found :("; 
+		echo "Sorry no files were found :("; 
 	}
+
+	return false;
 }
 
 
-//================ Helper Functions ================
-function random_photo_select($photos, $random_keys_array){
-	$random_select_array = array();
-
-	foreach ($random_keys_array as $key) {
-		array_push($random_select_array, $photos[$key]);
-	}
-
-	return $random_select_array;
-}
 
 
+//================ API Functions ================
 /** Dropbox uses POST for requests that really should be GET, so we just pass this function through. */
 function get_from_dropbox( $params, $endpoint, $access_token ) {
 	return send_to_dropbox( $params, $endpoint, $access_token );
@@ -107,7 +91,7 @@ function send_to_dropbox( $params, $endpoint, $access_token ) {
 	$result = curl_exec( $ch );
 
 	if ( false === $result ) {
-		echo "POOP";
+		echo "Send To Dropbox CURL function failed....";
 		curl_error( $ch ); // Send errors to Slack
 		curl_close( $ch );
 		exit();
@@ -118,14 +102,14 @@ function send_to_dropbox( $params, $endpoint, $access_token ) {
 
 	return $result;
 
-} // Function send_to_dropbox
+} 
 
-/** Download thumbnails from Dropbox. */
+/** Download thumbnail files from Dropbox. */
 function download_thumbnails_dropbox(){
 
 }
 
-/** Download file from Dropbox. */
+/** Download full image file from Dropbox. */
 function download_full_file_dropbox( $path, $access_token ) {
 
 	$json_path = json_encode(array('path'=>$path));
@@ -146,7 +130,7 @@ function download_full_file_dropbox( $path, $access_token ) {
 	$result = curl_exec( $ch );
 
 	if ( false === $result ) {
-		echo "Download From Dropbox Failed";
+		echo "Download From Dropbox CURL function failed";
 		curl_error( $ch ); // Send errors to Slack
 		curl_close( $ch );
 		exit();
@@ -156,6 +140,18 @@ function download_full_file_dropbox( $path, $access_token ) {
 	return $result;
 
 } // Function download_from_dropbox
+
+
+//================ Helper Functions ================
+function random_photo_select($photos, $random_keys_array){
+	$random_select_array = array();
+
+	foreach ($random_keys_array as $key) {
+		array_push($random_select_array, $photos[$key]);
+	}
+
+	return $random_select_array;
+}
 
 function endsWith($haystack, $needle) {
     // search forward starting from end minus needle length characters
