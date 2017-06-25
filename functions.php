@@ -17,41 +17,57 @@ function get_random_thumbnails(){
 
 	$folders = get_from_dropbox( $list_params, '/files/list_folder', DROPBOX_TOKEN );
 
-	foreach ($folders->entries as $item)
+	if(!empty($folders))
 	{
 
-		$file_as_array = (array) $item;
-
-		if($file_as_array['.tag'] === 'file' && endsWith($file_as_array['path_lower'], '.jpg'))
+		foreach ($folders->entries as $item)
 		{
-			array_push($photos, $file_as_array['id']);
+
+			$file_as_array = (array) $item;
+
+			if($file_as_array['.tag'] === 'file' && endsWith($file_as_array['path_lower'], '.jpg'))
+			{
+				array_push($photos, $file_as_array['id']);
+			}
+
 		}
 
-	}
-
-	$num_photos = count($photos);
-	if($num_photos !== 0)
-	{
-		$rand_array = array_rand($photos, 10);
-		$new_photos = random_photo_select($photos, $rand_array);
-
-		//Create filenames for each of th
-		foreach ($new_photos as $key => $value)
+		$num_photos = count($photos);
+		if($num_photos !== 0)
 		{
-			# code...
+			$rand_array_key = array_rand($photos, 9);
+			$new_photos = random_photo_select($photos, $rand_array_key);
+
+			//Create file for each random photo
+			$count = 0;
+			$all_photos = array();
+			foreach ($new_photos as $new_photo_id)
+			{
+				
+				$fileName = 'dist/images/image'. $count . '.jpeg';
+				ob_start();
+
+				echo download_thumbnails_dropbox($new_photo_id, DROPBOX_TOKEN);
+
+				//  Return the contents of the output buffer
+				$htmlStr = ob_get_contents();
+				// Clean (erase) the output buffer and turn off output buffering
+				ob_end_clean(); 
+				// Write final string to file
+				file_put_contents($fileName, $htmlStr);
+
+				array_push($all_photos, $fileName);
+				$count++;
+			}
+
+			//Return all the photo urls
+			return $all_photos;
+
 		}
-
-		//OLD ARRAY RAND
-		// $rand_index = array_rand($photos, 1);
-		// $rand_photo = $photos[$rand_index];
-
-		// //Create Image from Dropbox Content	
-		// header('Content-Type: image/jpeg');
-		// $download = download_full_file_dropbox($rand_photo, DROPBOX_TOKEN);
-	}
-	else
-	{
-		echo "Sorry no files were found :("; 
+		else
+		{
+			echo "Sorry no files were found :("; 
+		}
 	}
 
 	return false;
@@ -105,7 +121,38 @@ function send_to_dropbox( $params, $endpoint, $access_token ) {
 } 
 
 /** Download thumbnail files from Dropbox. */
-function download_thumbnails_dropbox(){
+function download_thumbnails_dropbox($path, $access_token ){
+
+	$json_path = json_encode(array(
+			'path'=>$path,
+			'format'=>"jpeg",
+			'size'=>"w640h480"
+		));
+
+	$endpoint = 'https://content.dropboxapi.com/2/files/get_thumbnail';
+	$headers = [
+		'Authorization: Bearer ' . $access_token,
+		'Dropbox-API-Arg:' . $json_path
+	];
+
+	$ch = curl_init();
+	curl_setopt( $ch, CURLOPT_URL, $endpoint );
+	curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+	curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+	curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+	curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+	curl_setopt($ch, CURLOPT_VERBOSE, 0);
+	$result = curl_exec( $ch );
+
+	if ( false === $result ) {
+		echo "Download From Dropbox CURL function failed";
+		curl_error( $ch ); // Send errors to Slack
+		curl_close( $ch );
+		exit();
+	}
+	curl_close( $ch );
+
+	return $result;
 
 }
 

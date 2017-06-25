@@ -10,7 +10,7 @@
 	$headingline: #b1b1b1;
 	$white: $truewhite; 
 	$black: #000000; 
-	$primary: #c6cad1; 
+	$primary: #ea9738; 
 	$primary_light: lighten($primary,10); 
 	$secondary: #2f2f2f;
 	$tertiary: #4c6aaf; 
@@ -20,29 +20,6 @@
 
 	$swipe: #bebebe;
 	$error: $red;
-
-// Jacloc Theme vars
-	$bggrey: #f6f6f6;
-	$bodyhover: #da1c5c;
-	$darkbggrey: #f0f0f0;
-	$lines: #d8d8d8;
-	$footer-icon: #dedede;
-	$buttonhover: #07afe5;
-	$subtitle-grey: #797979;
-	$hero-grey: #dadee5;
-	$hero-box: #e6e9f1;
-	$hero-title: #303030;
-	$hero-subtitle: #e24357;
-	$product-border: #e7e7e7;
-	$slider-dot: #bbc1d0;
-
-	//Aliases
-	$blue: $tertiary;
-	$grey: $primary;
-	$darkgrey: $secondary;
-	$heading-two: $darkgrey;
-	$pink: $bodyhover;
-	$lightblue: $buttonhover;
 
 
 // theme font variables
@@ -78,7 +55,6 @@
 	
 // aliases for many of the above
 	$primarylight: $primary_light;
-	$gray: $grey;
 	$bodytext: $bodycolor;
 	$bodycolour: $bodycolor;
 

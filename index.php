@@ -25,7 +25,9 @@
   </head>
   <body class="randophoto-page">
 	<div class="container">
-		<h1 class="page-title text-center">Randophoto</h1>
+		<a class="header-link" href="/randophoto">
+			<h1 class="page-title text-center">Randophoto</h1>
+		</a>
 		<?php  
 
 			if($photos)
@@ -36,8 +38,8 @@
 						foreach($photos as $image)
 						{
 					?>
-							<a href="<?php echo $image['url']; ?>" target="_blank" class="image-link">
-								<img src="<?php echo $image['thumbnail']; ?>" class="thumbnail" width="64" height="64"/>
+							<a href="<?php echo $image; ?>" target="_blank" class="image-link col-md-4">
+								<div class="image" style="background-image: url('<?php echo $image; ?>');"></div>
 							</a>
 					<?php
 						}
