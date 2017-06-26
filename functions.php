@@ -2,7 +2,7 @@
 
 require 'config.php'; 
 
-
+// Main function to get random thumbnails to be displayed on website
 function get_random_thumbnails(){
 
 	$list_params = [
@@ -20,7 +20,7 @@ function get_random_thumbnails(){
 	if(!empty($folders))
 	{
 
-		foreach ($folders->entries as $item)
+		foreach($folders->entries as $item)
 		{
 
 			$file_as_array = (array) $item;
@@ -32,58 +32,40 @@ function get_random_thumbnails(){
 
 		}
 
-		$num_photos = count($photos);
-		if($num_photos !== 0)
+		$photos_count = count($photos);
+		if($photos_count !== 0)
 		{
-			$rand_array_key = array_rand($photos, 9);
+
+			$rand_array_key = array_rand($photos, NUMBER_OF_PHOTOS);
 			$new_photos = random_photo_select($photos, $rand_array_key);
 
-			//Create file for each random photo
-			$count = 0;
-			$all_photos = array();
+			// Create file for each random photo
+			$random_photos = array();
 			foreach ($new_photos as $new_photo_id)
 			{
-				
-				$fileName = 'dist/images/image'. $count . '.jpeg';
-				ob_start();
+				$fileName = 'dist/images/' . md5($new_photo_id) . '.jpeg'; // Hash filename to prevent caching
 
-				echo download_thumbnails_dropbox($new_photo_id, DROPBOX_TOKEN);
+				$url = download_thumbnail_dropbox($new_photo_id, DROPBOX_TOKEN);
 
-				//  Return the contents of the output buffer
-				$htmlStr = ob_get_contents();
-				// Clean (erase) the output buffer and turn off output buffering
-				ob_end_clean(); 
 				// Write final string to file
-				file_put_contents($fileName, $htmlStr);
+				file_put_contents($fileName, $url);
 
-				array_push($all_photos, $fileName);
-				$count++;
+				array_push($random_photos, $fileName);
 			}
 
-			//Return all the photo urls
-			return $all_photos;
+			// Return all the photo urls
+			return $random_photos;
 
-		}
-		else
-		{
-			echo "Sorry no files were found :("; 
 		}
 	}
 
 	return false;
 }
 
-
-
-
 //================ API Functions ================
-/** Dropbox uses POST for requests that really should be GET, so we just pass this function through. */
-function get_from_dropbox( $params, $endpoint, $access_token ) {
-	return send_to_dropbox( $params, $endpoint, $access_token );
-}
 
-/** Sends data to Dropbox. */
-function send_to_dropbox( $params, $endpoint, $access_token ) {
+// Get data from Dropbox (Note: Dropbox uses POST for most API calls)
+function get_from_dropbox( $params, $endpoint, $access_token ) {
 
 	$params = json_encode( $params );
 	$endpoint = (
@@ -108,7 +90,7 @@ function send_to_dropbox( $params, $endpoint, $access_token ) {
 
 	if ( false === $result ) {
 		echo "Send To Dropbox CURL function failed....";
-		curl_error( $ch ); // Send errors to Slack
+		curl_error( $ch );
 		curl_close( $ch );
 		exit();
 	}
@@ -121,7 +103,7 @@ function send_to_dropbox( $params, $endpoint, $access_token ) {
 } 
 
 /** Download thumbnail files from Dropbox. */
-function download_thumbnails_dropbox($path, $access_token ){
+function download_thumbnail_dropbox($path, $access_token ){
 
 	$json_path = json_encode(array(
 			'path'=>$path,
@@ -146,7 +128,7 @@ function download_thumbnails_dropbox($path, $access_token ){
 
 	if ( false === $result ) {
 		echo "Download From Dropbox CURL function failed";
-		curl_error( $ch ); // Send errors to Slack
+		curl_error( $ch );
 		curl_close( $ch );
 		exit();
 	}
@@ -178,7 +160,7 @@ function download_full_file_dropbox( $path, $access_token ) {
 
 	if ( false === $result ) {
 		echo "Download From Dropbox CURL function failed";
-		curl_error( $ch ); // Send errors to Slack
+		curl_error( $ch );
 		curl_close( $ch );
 		exit();
 	}
@@ -186,7 +168,7 @@ function download_full_file_dropbox( $path, $access_token ) {
 
 	return $result;
 
-} // Function download_from_dropbox
+}
 
 
 //================ Helper Functions ================
@@ -204,4 +186,3 @@ function endsWith($haystack, $needle) {
     // search forward starting from end minus needle length characters
     return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== false);
 }
-

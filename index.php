@@ -1,7 +1,10 @@
 <?php 
+	//
+	// Randophoto Main Page
+	//
+	$verison_number = 'v1.0.1';
+	
 	require 'functions.php';
-
-	$photos = get_random_thumbnails();
 
  ?>
 <!DOCTYPE html>
@@ -10,12 +13,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#4c6aaf">
     <title>Randophoto</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-	<link rel="stylesheet" type="text/css" href="dist/css/styles.css">
-
+	<link rel="stylesheet" type="text/css" href="dist/css/styles.css?=<?php echo $verison_number; ?>">
+    <meta name="theme-color" content="#121212">
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -28,7 +30,16 @@
 		<a class="header-link" href="/randophoto">
 			<h1 class="page-title text-center">Randophoto</h1>
 		</a>
+		<div class="loading-content">
+			<div class="info-wrap">
+				<?php  
+					echo "We are choosing <strong>" . NUMBER_OF_PHOTOS . "</strong> photos from within your Dropbox... please wait."
+				?>
+			</div>
+			<div class="loader"></div>
+		</div>
 		<?php  
+			$photos = get_random_thumbnails();
 
 			if($photos)
 			{
@@ -55,11 +66,11 @@
 			}
 		?>
 	</div>
-
+	
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="dist/js/scripts.js?=<?php echo $verison_number; ?>"></script>
   </body>
 </html>

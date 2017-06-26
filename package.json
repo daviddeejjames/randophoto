@@ -1,6 +1,6 @@
 {
   "name": "randophoto",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Random photo generator using Dropbox API",
   "private": true,
   "scripts": {
